@@ -52,10 +52,4 @@ abstract class BaseActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    fun startActivityForResult(intent: Intent?) {
-        intent?.let { intent2 ->
-            startActivityForResult(intent2, ACTIVITY_REQUEST)
-        }
-    }
 }
