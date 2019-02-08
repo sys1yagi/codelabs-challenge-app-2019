@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CODE = 0x11
-        private const val STATE_STORIES = "stories"
     }
 
     private val adapter = GroupAdapter<ViewHolder>()
@@ -47,21 +46,8 @@ class MainActivity : AppCompatActivity() {
         binding.itemRecycler.adapter = adapter
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadTopStories(true)
+            viewModel.loadTopStories(refresh = true)
         }
-
-        val savedStories = savedInstanceState?.let { bundle ->
-            bundle.getString(STATE_STORIES)?.let { itemsJson ->
-                // itemsJsonAdapter.fromJson(itemsJson)
-            }
-        }
-
-//        if (savedStories != null) {
-//            storyAdapter.stories = savedStories.toMutableList()
-//            storyAdapter.alreadyReadStories = ArticlePreferences.getArticleIds(this@MainActivity)
-//            storyAdapter.notifyDataSetChanged()
-//            return
-//        }
 
         viewModel.viewState().observe({ lifecycle }) {
             when (it) {
@@ -107,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        viewModel.loadTopStories()
+        viewModel.loadTopStories(savedInstanceState)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -138,7 +124,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.refresh -> {
                 binding.swipeRefresh.isRefreshing = true
-                 viewModel.loadTopStories(true)
+                viewModel.loadTopStories(refresh = true)
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -146,10 +132,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-//        outState.apply {
-//            putString(STATE_STORIES, itemsJsonAdapter.toJson(storyAdapter.stories))
-//        }
-
+        viewModel.onSaveInstanceState(outState)
         super.onSaveInstanceState(outState)
     }
 }

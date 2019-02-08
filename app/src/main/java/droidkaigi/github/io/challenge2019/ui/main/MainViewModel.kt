@@ -1,5 +1,6 @@
 package droidkaigi.github.io.challenge2019.ui.main
 
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,10 @@ class MainViewModel(
     private val api: HackerNewsApi
 ) : ViewModel() {
 
+    companion object {
+        private const val STATE_STORIES = "stories"
+    }
+
     sealed class ViewState {
         object Progress : ViewState()
         object NotProgress : ViewState()
@@ -33,31 +38,37 @@ class MainViewModel(
 
     fun topStories(): LiveData<List<Item>> = topStories
 
-    fun loadTopStories(refresh: Boolean = false) {
+    fun loadTopStories(
+        savedInstanceState: Bundle? = null,
+        refresh: Boolean = false
+    ) {
         viewModelScope.launch {
             try {
                 if (!refresh) {
                     viewState.postValue(ViewState.Progress)
                 }
 
-                val storyIds = api
-                    .getTopStories()
-                    .await()
-                    .take(20)
+                val stories = if (savedInstanceState != null) {
+                    savedInstanceState.getParcelableArrayList<Item>(STATE_STORIES)?.toList()
+                } else {
+                    val storyIds = api
+                        .getTopStories()
+                        .await()
+                        .take(20)
 
-                // 1件でも取り出せなかったら全体のエラーとする
-                // エラーを無視する場合はtry-catchしつつ、mapNotNullにする
-                val stories = coroutineScope {
-                    storyIds
-                        .map { id ->
-                            // 並行で実行するために2回mapする
-                            async(dispatchers.io) { api.getItem(id).await() }
-                        }
-                        .map { deferred ->
-                            deferred.await()
-                        }
+                    // 1件でも取り出せなかったら全体のエラーとする
+                    // エラーを無視する場合はtry-catchしつつ、mapNotNullにする
+                    coroutineScope {
+                        storyIds
+                            .map { id ->
+                                // 並行で実行するために2回mapする
+                                async(dispatchers.io) { api.getItem(id).await() }
+                            }
+                            .map { deferred ->
+                                deferred.await()
+                            }
+                    }
                 }
-
                 topStories.postValue(stories)
                 viewState.postValue(ViewState.NotProgress)
             } catch (e: CancellationException) {
@@ -85,4 +96,9 @@ class MainViewModel(
         }
     }
 
+    fun onSaveInstanceState(outState: Bundle) {
+        topStories.value?.let {
+            outState.putParcelableArrayList(STATE_STORIES, ArrayList(it))
+        }
+    }
 }
