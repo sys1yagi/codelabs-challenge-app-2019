@@ -1,7 +1,6 @@
-package droidkaigi.github.io.challenge2019.ui.story
+package droidkaigi.github.io.challenge2019.ui.main
 
 import androidx.appcompat.widget.PopupMenu
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import droidkaigi.github.io.challenge2019.R

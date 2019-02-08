@@ -1,4 +1,4 @@
-package droidkaigi.github.io.challenge2019.util
+package droidkaigi.github.io.challenge2019.util.ingest
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

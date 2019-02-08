@@ -5,8 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebResourceError
@@ -14,10 +12,10 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ProgressBar
+import androidx.core.view.isVisible
 import com.squareup.moshi.Types
 import droidkaigi.github.io.challenge2019.BaseActivity
 import droidkaigi.github.io.challenge2019.R
-import droidkaigi.github.io.challenge2019.Util
 import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.api.response.Item
 import retrofit2.Call
@@ -111,7 +109,7 @@ class StoryActivity : BaseActivity() {
             }
 
             override fun onPostExecute(result: Unit?) {
-                progressView.visibility = Util.setVisibility(false)
+                progressView.isVisible = false
             }
         }
 
@@ -171,7 +169,7 @@ class StoryActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item?.itemId) {
             R.id.refresh -> {
-                progressView.visibility = Util.setVisibility(true)
+                progressView.isVisible = true
                 loadUrlAndComments()
                 return true
             }
@@ -187,8 +185,8 @@ class StoryActivity : BaseActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.apply {
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.apply {
             putString(STATE_COMMENTS, itemsJsonAdapter.toJson(commentAdapter.comments))
         }
 
