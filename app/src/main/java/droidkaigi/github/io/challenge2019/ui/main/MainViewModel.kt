@@ -28,9 +28,9 @@ class MainViewModel(
 
     fun viewState(): LiveData<ViewState> = viewState
 
-    private val topSeries = MutableLiveData<List<Item>>()
+    private val topStories = MutableLiveData<List<Item>>()
 
-    fun topStories(): LiveData<List<Item>> = topSeries
+    fun topStories(): LiveData<List<Item>> = topStories
 
     fun loadTopStories(refresh: Boolean = false) {
         viewModelScope.launch {
@@ -57,7 +57,7 @@ class MainViewModel(
                         }
                 }
 
-                topSeries.postValue(stories)
+                topStories.postValue(stories)
                 viewState.postValue(ViewState.NotProgress)
             } catch (e: CancellationException) {
                 // no op

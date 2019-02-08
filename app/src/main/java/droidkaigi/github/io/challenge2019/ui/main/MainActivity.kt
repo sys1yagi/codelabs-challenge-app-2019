@@ -21,6 +21,7 @@ import org.koin.androidx.viewmodel.ext.viewModel
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        private const val REQUEST_CODE = 0x11
         private const val STATE_STORIES = "stories"
     }
 
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 //                val itemJson = itemJsonAdapter.toJson(item)
 //                val intent =
 //                    Intent(this@MainActivity, StoryActivity::class.java).apply {
-//                        putExtra(StoryActivity.EXTRA_ITEM_JSON, itemJson)
+//                        putExtra(StoryActivity.EXTRA_ITEM, itemJson)
 //                    }
 //                startActivityForResult(intent)
 //            },
@@ -122,15 +123,19 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel.topStories().observe({ lifecycle }) {
             adapter.clear()
-            adapter.addAll(it.map { item ->
+            adapter.addAll(it.map {
                 StoryItem(
-                    item,
+                    it,
                     { item ->
-
+                        startActivityForResult(
+                            StoryActivity.createIntent(this, item),
+                            REQUEST_CODE
+                        )
                     },
                     { item, position ->
 
                     },
+                    // TODO
                     false
                 )
             })

@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="clickable">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/selector_item</item>
+    </style>
 </resources>

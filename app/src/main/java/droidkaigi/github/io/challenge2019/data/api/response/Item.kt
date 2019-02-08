@@ -1,8 +1,11 @@
 package droidkaigi.github.io.challenge2019.data.api.response
 
+import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class Item(
     @Json(name = "id")
@@ -35,7 +38,7 @@ data class Item(
     val parts: List<Long> = emptyList(),
     @Json(name = "descendants")
     val descendants: Int = 0
-) {
+) : Parcelable {
     companion object {
         const val NO_ID = -1L
     }

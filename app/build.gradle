@@ -25,6 +25,10 @@ android {
             applicationIdSuffix '.debug'
         }
     }
+    androidExtensions {
+        experimental = true
+        features = ["parcelize"]
+    }
 }
 
 dependencies {

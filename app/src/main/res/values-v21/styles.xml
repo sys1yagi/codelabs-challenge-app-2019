@@ -1,0 +1,6 @@
+<resources>
+    <style name="clickable">
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:selectableItemBackgroundBorderless</item>
+    </style>
+</resources>
