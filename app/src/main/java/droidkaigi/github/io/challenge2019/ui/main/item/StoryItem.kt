@@ -8,8 +8,8 @@ import droidkaigi.github.io.challenge2019.databinding.ItemStoryBinding
 
 class StoryItem(
     private val item: Item,
-    private val onClickItem: ((Item) -> Unit)? = null,
-    private val onClickMenuItem: ((Item, Int) -> Unit)? = null,
+    private val onClickItem: ((Item) -> Unit) = {},
+    private val onClickMenuItem: ((Item, Int) -> Unit) = { _, _ -> },
     private val alreadyRead: Boolean = false
 ) : BindableItem<ItemStoryBinding>() {
     override fun getLayout() = R.layout.item_story
@@ -19,23 +19,24 @@ class StoryItem(
         binding.alreadyRead = alreadyRead
         binding.item = item
         binding.root.setOnClickListener {
-            onClickItem?.invoke(item)
+            onClickItem(item)
         }
         binding.menuButton.setOnClickListener {
-            val popupMenu = PopupMenu(binding.menuButton.context, binding.menuButton)
-            popupMenu.inflate(R.menu.story_menu)
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                val menuItemId = menuItem.itemId
-                when (menuItemId) {
-                    R.id.copy_url,
-                    R.id.refresh -> {
-                        onClickMenuItem?.invoke(item, menuItemId)
-                        true
+            PopupMenu(binding.menuButton.context, binding.menuButton).apply {
+                inflate(R.menu.story_menu)
+                setOnMenuItemClickListener { menuItem ->
+                    val menuItemId = menuItem.itemId
+                    when (menuItemId) {
+                        R.id.copy_url,
+                        R.id.refresh -> {
+                            onClickMenuItem(item, menuItemId)
+                            true
+                        }
+                        else -> false
                     }
-                    else -> false
                 }
+                show()
             }
-            popupMenu.show()
         }
     }
 }

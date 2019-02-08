@@ -8,6 +8,7 @@ import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.api.response.Item
 import droidkaigi.github.io.challenge2019.util.coroutine.AppCoroutineDispatchers
 import droidkaigi.github.io.challenge2019.util.extension.await
+import droidkaigi.github.io.challenge2019.util.extension.swapFirst
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -35,7 +36,7 @@ class MainViewModel(
     fun loadTopStories(refresh: Boolean = false) {
         viewModelScope.launch {
             try {
-                if(!refresh) {
+                if (!refresh) {
                     viewState.postValue(ViewState.Progress)
                 }
 
@@ -63,6 +64,23 @@ class MainViewModel(
                 // no op
             } catch (e: Exception) {
                 viewState.postValue(ViewState.Error(e))
+            }
+        }
+    }
+
+    fun reloadItem(item: Item) {
+        viewModelScope.launch {
+            try {
+                val reloadedItem = api.getItem(item.id).await()
+                topStories.postValue(
+                    topStories.value?.swapFirst(reloadedItem) {
+                        it.id == item.id
+                    }
+                )
+            } catch (e: CancellationException) {
+                // no op
+            } catch (e: Exception) {
+                // TODO
             }
         }
     }

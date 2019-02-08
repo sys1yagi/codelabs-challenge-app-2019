@@ -1,6 +1,9 @@
 package droidkaigi.github.io.challenge2019.ui.main
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -29,10 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModel<MainViewModel>()
 
-//    private val itemJsonAdapter = moshi.adapter(Item::class.java)
-//    private val itemsJsonAdapter =
-//        moshi.adapter<List<Item?>>(Types.newParameterizedType(List::class.java, Item::class.java))
-
     val binding by lazy { DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,48 +43,6 @@ class MainActivity : AppCompatActivity() {
         )
         binding.itemRecycler.addItemDecoration(itemDecoration)
 
-
-//        storyAdapter = StoryAdapter(
-//            stories = mutableListOf(),
-//            onClickItem = { item ->
-//                val itemJson = itemJsonAdapter.toJson(item)
-//                val intent =
-//                    Intent(this@MainActivity, StoryActivity::class.java).apply {
-//                        putExtra(StoryActivity.EXTRA_ITEM, itemJson)
-//                    }
-//                startActivityForResult(intent)
-//            },
-//            onClickMenuItem = { item, menuItemId ->
-//                when (menuItemId) {
-//                    R.id.copy_url -> {
-//                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-//                        clipboard.primaryClip = ClipData.newPlainText("url", item.url)
-//                    }
-//                    R.id.refresh -> {
-//                        hackerNewsApi.getItem(item.id).enqueue(object : Callback<Item> {
-//                            override fun onResponse(call: Call<Item>, response: Response<Item>) {
-//                                response.body()?.let { newItem ->
-//                                    val index = storyAdapter.stories.indexOf(item)
-//                                    if (index == -1) return
-//
-//                                    storyAdapter.stories[index] = newItem
-//                                    runOnUiThread {
-//                                        storyAdapter.alreadyReadStories =
-//                                            ArticlePreferences.getArticleIds(this@MainActivity)
-//                                        storyAdapter.notifyItemChanged(index)
-//                                    }
-//                                }
-//                            }
-//
-//                            override fun onFailure(call: Call<Item>, t: Throwable) {
-//                                // showError(t)
-//                            }
-//                        })
-//                    }
-//                }
-//            },
-//            alreadyReadStories = ArticlePreferences.getArticleIds(this)
-//        )
         binding.itemRecycler.adapter = adapter
 
         binding.swipeRefresh.setOnRefreshListener {
@@ -132,8 +89,16 @@ class MainActivity : AppCompatActivity() {
                             REQUEST_CODE
                         )
                     },
-                    { item, position ->
-
+                    { item, menuItemId ->
+                        when (menuItemId) {
+                            R.id.copy_url -> {
+                                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                clipboard.primaryClip = ClipData.newPlainText("url", item.url)
+                            }
+                            R.id.refresh -> {
+                                viewModel.reloadItem(item)
+                            }
+                        }
                     },
                     // TODO
                     false
@@ -142,7 +107,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.loadTopStories()
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
