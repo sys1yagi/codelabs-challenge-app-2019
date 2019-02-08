@@ -1,9 +1,10 @@
-package droidkaigi.github.io.challenge2019
+package droidkaigi.github.io.challenge2019.ui.story
 
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import droidkaigi.github.io.challenge2019.R
 import droidkaigi.github.io.challenge2019.data.api.response.Item
 import droidkaigi.github.io.challenge2019.databinding.ItemStoryBinding
 

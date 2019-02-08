@@ -1,4 +1,4 @@
-package droidkaigi.github.io.challenge2019
+package droidkaigi.github.io.challenge2019.ui.story
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
