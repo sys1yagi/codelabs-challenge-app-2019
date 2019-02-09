@@ -86,9 +86,7 @@ class MainActivity : AppCompatActivity() {
                                 viewModel.reloadItem(item)
                             }
                         }
-                    },
-                    // TODO
-                    false
+                    }
                 )
             })
         }
@@ -102,8 +100,6 @@ class MainActivity : AppCompatActivity() {
                 data?.getLongExtra(StoryActivity.READ_ARTICLE_ID, 0L)?.let { id ->
                     if (id != 0L) {
                         saveArticleIds(this, id.toString())
-//                        storyAdapter.alreadyReadStories = ArticlePreferences.getArticleIds(this)
-//                        storyAdapter.notifyDataSetChanged()
                     }
                 }
             }

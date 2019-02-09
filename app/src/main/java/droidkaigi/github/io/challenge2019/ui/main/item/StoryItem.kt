@@ -5,21 +5,21 @@ import com.xwray.groupie.databinding.BindableItem
 import droidkaigi.github.io.challenge2019.R
 import droidkaigi.github.io.challenge2019.data.api.response.Item
 import droidkaigi.github.io.challenge2019.databinding.ItemStoryBinding
+import droidkaigi.github.io.challenge2019.ui.main.Story
 
 class StoryItem(
-    private val item: Item,
+    private val story: Story,
     private val onClickItem: ((Item) -> Unit) = {},
-    private val onClickMenuItem: ((Item, Int) -> Unit) = { _, _ -> },
-    private val alreadyRead: Boolean = false
+    private val onClickMenuItem: ((Item, Int) -> Unit) = { _, _ -> }
 ) : BindableItem<ItemStoryBinding>() {
     override fun getLayout() = R.layout.item_story
 
     override fun bind(binding: ItemStoryBinding, position: Int) {
         binding.alreadyRead = false
-        binding.alreadyRead = alreadyRead
-        binding.item = item
+        binding.alreadyRead = story.alreadyRead
+        binding.item = story.item
         binding.root.setOnClickListener {
-            onClickItem(item)
+            onClickItem(story.item)
         }
         binding.menuButton.setOnClickListener {
             PopupMenu(binding.menuButton.context, binding.menuButton).apply {
@@ -29,7 +29,7 @@ class StoryItem(
                     when (menuItemId) {
                         R.id.copy_url,
                         R.id.refresh -> {
-                            onClickMenuItem(item, menuItemId)
+                            onClickMenuItem(story.item, menuItemId)
                             true
                         }
                         else -> false

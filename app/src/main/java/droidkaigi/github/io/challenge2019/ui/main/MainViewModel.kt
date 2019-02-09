@@ -31,9 +31,9 @@ class MainViewModel(
 
     fun viewState(): LiveData<ViewState> = viewState
 
-    private val topStories = MutableLiveData<List<Item>>()
+    private val topStories = MutableLiveData<List<Story>>()
 
-    fun topStories(): LiveData<List<Item>> = topStories
+    fun topStories(): LiveData<List<Story>> = topStories
 
     fun loadTopStories(
         savedInstanceState: Bundle? = null,
@@ -46,12 +46,14 @@ class MainViewModel(
                 }
 
                 val stories = if (savedInstanceState != null) {
-                    savedInstanceState.getParcelableArrayList<Item>(STATE_STORIES)?.toList()
+                    savedInstanceState.getParcelableArrayList<Story>(STATE_STORIES)?.toList()
                 } else {
                     val storyIds = api
                         .getTopStories()
                         .await()
                         .take(20)
+
+                    // todo get already read ids
 
                     // 1件でも取り出せなかったら全体のエラーとする
                     // エラーを無視する場合はtry-catchしつつ、mapNotNullにする
@@ -61,6 +63,9 @@ class MainViewModel(
                                 async(dispatchers.io) { api.getItem(id).await() }
                             }
                             .awaitAll()
+                            .map {
+                                Story(it, false)
+                            }
                     }
                 }
                 topStories.postValue(stories)
@@ -77,9 +82,10 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 val reloadedItem = api.getItem(item.id).await()
+                val reloadedStory = Story(reloadedItem, false) // TODO
                 topStories.postValue(
-                    topStories.value?.swapFirst(reloadedItem) {
-                        it.id == item.id
+                    topStories.value?.swapFirst(reloadedStory) {
+                        it.item.id == item.id
                     }
                 )
             } catch (e: CancellationException) {
