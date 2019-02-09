@@ -10,10 +10,7 @@ import droidkaigi.github.io.challenge2019.data.api.response.Item
 import droidkaigi.github.io.challenge2019.util.coroutine.AppCoroutineDispatchers
 import droidkaigi.github.io.challenge2019.util.extension.await
 import droidkaigi.github.io.challenge2019.util.extension.swapFirst
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MainViewModel(
     private val dispatchers: AppCoroutineDispatchers,
@@ -61,12 +58,9 @@ class MainViewModel(
                     coroutineScope {
                         storyIds
                             .map { id ->
-                                // 並行で実行するために2回mapする
                                 async(dispatchers.io) { api.getItem(id).await() }
                             }
-                            .map { deferred ->
-                                deferred.await()
-                            }
+                            .awaitAll()
                     }
                 }
                 topStories.postValue(stories)
