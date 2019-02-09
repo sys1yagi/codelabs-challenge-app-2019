@@ -1,5 +1,8 @@
 package droidkaigi.github.io.challenge2019.data.api.response
 
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class User(
     val id: String,
     val delay: Long,

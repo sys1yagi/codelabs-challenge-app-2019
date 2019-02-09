@@ -3,7 +3,6 @@ package droidkaigi.github.io.challenge2019.data.entity
 import android.os.Parcelable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import droidkaigi.github.io.challenge2019.data.db.entity.Item
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

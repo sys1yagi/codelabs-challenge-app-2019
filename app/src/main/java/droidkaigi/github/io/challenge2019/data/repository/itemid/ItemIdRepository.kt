@@ -16,4 +16,10 @@ class ItemIdRepository(
             ids
         }
     }
+
+    suspend fun refresh() {
+        withContext(dispatchers.io) {
+            local.deleteAll()
+        }
+    }
 }

@@ -19,6 +19,7 @@ import droidkaigi.github.io.challenge2019.BaseActivity
 import droidkaigi.github.io.challenge2019.R
 import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.api.response.Item
+import droidkaigi.github.io.challenge2019.data.entity.ItemEntity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,7 +33,7 @@ class StoryActivity : BaseActivity() {
         const val READ_ARTICLE_ID = "read_article_id"
         private const val STATE_COMMENTS = "comments"
 
-        fun createIntent(context: Context, item: Item): Intent {
+        fun createIntent(context: Context, item: ItemEntity): Intent {
             return Intent(context, StoryActivity::class.java).apply{
                 putExtra(EXTRA_ITEM, item)
             }
@@ -51,7 +52,7 @@ class StoryActivity : BaseActivity() {
     private val itemsJsonAdapter =
         moshi.adapter<List<Item?>>(Types.newParameterizedType(List::class.java, Item::class.java))
 
-    private val item: Item by lazy { intent.getParcelableExtra<Item>(EXTRA_ITEM)}
+    private val item: ItemEntity by lazy { intent.getParcelableExtra<ItemEntity>(EXTRA_ITEM)}
 
     override fun getContentView(): Int {
         return R.layout.activity_story
@@ -76,8 +77,6 @@ class StoryActivity : BaseActivity() {
         commentAdapter = CommentAdapter(emptyList())
         recyclerView.adapter = commentAdapter
 
-        if (item == null) return
-
         val savedComments = savedInstanceState?.let { bundle ->
             bundle.getString(STATE_COMMENTS)?.let { itemsJson ->
                 itemsJsonAdapter.fromJson(itemsJson)
@@ -87,7 +86,7 @@ class StoryActivity : BaseActivity() {
         if (savedComments != null) {
             commentAdapter.comments = savedComments
             commentAdapter.notifyDataSetChanged()
-            webView.loadUrl(item!!.url)
+            webView.loadUrl(item.url)
             return
         }
 

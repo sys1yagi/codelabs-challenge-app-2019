@@ -4,13 +4,14 @@ import androidx.appcompat.widget.PopupMenu
 import com.xwray.groupie.databinding.BindableItem
 import droidkaigi.github.io.challenge2019.R
 import droidkaigi.github.io.challenge2019.data.api.response.Item
+import droidkaigi.github.io.challenge2019.data.entity.ItemEntity
 import droidkaigi.github.io.challenge2019.databinding.ItemStoryBinding
 import droidkaigi.github.io.challenge2019.ui.main.Story
 
 class StoryItem(
     private val story: Story,
-    private val onClickItem: ((Item) -> Unit) = {},
-    private val onClickMenuItem: ((Item, Int) -> Unit) = { _, _ -> }
+    private val onClickItem: ((ItemEntity) -> Unit) = {},
+    private val onClickMenuItem: ((ItemEntity, Int) -> Unit) = { _, _ -> }
 ) : BindableItem<ItemStoryBinding>() {
     override fun getLayout() = R.layout.item_story
 

@@ -6,12 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
-import droidkaigi.github.io.challenge2019.data.api.response.Item
+import droidkaigi.github.io.challenge2019.data.entity.ItemEntity
 import droidkaigi.github.io.challenge2019.data.repository.itemid.ItemIdRepository
 import droidkaigi.github.io.challenge2019.util.coroutine.AppCoroutineDispatchers
 import droidkaigi.github.io.challenge2019.util.extension.await
 import droidkaigi.github.io.challenge2019.util.extension.swapFirst
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 class MainViewModel(
     private val dispatchers: AppCoroutineDispatchers,
@@ -45,6 +46,8 @@ class MainViewModel(
             try {
                 if (!refresh) {
                     viewState.postValue(ViewState.Progress)
+                } else {
+                    itemIdRepository.refresh()
                 }
 
                 val stories = if (savedInstanceState != null) {
@@ -65,7 +68,7 @@ class MainViewModel(
                             }
                             .awaitAll()
                             .map {
-                                Story(it, false)
+                                Story(ItemEntity.fromResponse(it), false)
                             }
                     }
                 }
@@ -74,15 +77,16 @@ class MainViewModel(
             } catch (e: CancellationException) {
                 // no op
             } catch (e: Exception) {
+                Timber.e(e)
                 viewState.postValue(ViewState.Error(e))
             }
         }
     }
 
-    fun reloadItem(item: Item) {
+    fun reloadItem(item: ItemEntity) {
         viewModelScope.launch {
             try {
-                val reloadedItem = api.getItem(item.id).await()
+                val reloadedItem = ItemEntity.fromResponse(api.getItem(item.id).await())
                 val reloadedStory = Story(reloadedItem, false) // TODO
                 topStories.postValue(
                     topStories.value?.swapFirst(reloadedStory) {
