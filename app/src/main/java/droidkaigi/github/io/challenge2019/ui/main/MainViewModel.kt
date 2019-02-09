@@ -5,18 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.entity.ItemEntity
+import droidkaigi.github.io.challenge2019.data.repository.item.ItemRepository
 import droidkaigi.github.io.challenge2019.data.repository.itemid.ItemIdRepository
 import droidkaigi.github.io.challenge2019.util.coroutine.AppCoroutineDispatchers
-import droidkaigi.github.io.challenge2019.util.extension.await
 import droidkaigi.github.io.challenge2019.util.extension.swapFirst
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class MainViewModel(
     private val dispatchers: AppCoroutineDispatchers,
-    private val api: HackerNewsApi,
+    private val itemRepository: ItemRepository,
     private val itemIdRepository: ItemIdRepository
 ) : ViewModel() {
 
@@ -61,15 +61,8 @@ class MainViewModel(
 
                     // 1件でも取り出せなかったら全体のエラーとする
                     // エラーを無視する場合はtry-catchしつつ、mapNotNullにする
-                    coroutineScope {
-                        storyIds
-                            .map { id ->
-                                async(dispatchers.io) { api.getItem(id).await() }
-                            }
-                            .awaitAll()
-                            .map {
-                                Story(ItemEntity.fromResponse(it), false)
-                            }
+                    itemRepository.getItemWithIds(storyIds).map {
+                        Story(it, false)
                     }
                 }
                 topStories.postValue(stories)
@@ -86,7 +79,7 @@ class MainViewModel(
     fun reloadItem(item: ItemEntity) {
         viewModelScope.launch {
             try {
-                val reloadedItem = ItemEntity.fromResponse(api.getItem(item.id).await())
+                val reloadedItem = itemRepository.getItem(item.id)
                 val reloadedStory = Story(reloadedItem, false) // TODO
                 topStories.postValue(
                     topStories.value?.swapFirst(reloadedStory) {

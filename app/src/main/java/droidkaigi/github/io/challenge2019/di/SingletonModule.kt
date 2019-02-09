@@ -8,9 +8,11 @@ import droidkaigi.github.io.challenge2019.BuildConfig
 import droidkaigi.github.io.challenge2019.MyApplication
 import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.db.AppDatabase
+import droidkaigi.github.io.challenge2019.data.db.dao.ItemDao
 import droidkaigi.github.io.challenge2019.data.db.dao.ItemIdDao
 import droidkaigi.github.io.challenge2019.data.repository.item.ItemLocalDataSource
 import droidkaigi.github.io.challenge2019.data.repository.item.ItemRemoteDataSource
+import droidkaigi.github.io.challenge2019.data.repository.item.ItemRepository
 import droidkaigi.github.io.challenge2019.data.repository.itemid.ItemIdLocalDataSource
 import droidkaigi.github.io.challenge2019.data.repository.itemid.ItemIdRemoteDataSource
 import droidkaigi.github.io.challenge2019.data.repository.itemid.ItemIdRepository
@@ -77,4 +79,21 @@ fun singletonModule(application: Application, url: String) = module {
             get()
         )
     }
+
+    single<ItemDao> {
+        get<AppDatabase>().itemDao()
+    }
+
+    single<ItemLocalDataSource> {
+        ItemLocalDataSource(get())
+    }
+
+    single<ItemRemoteDataSource> {
+        ItemRemoteDataSource(get(), get(), get())
+    }
+
+    single<ItemRepository> {
+        ItemRepository(get(), get())
+    }
+
 }

@@ -15,10 +15,10 @@ interface ItemDao {
     suspend fun getAllIds(): List<Long>
 
     @Query("SELECT * FROM item WHERE id IN(:itemIds)")
-    suspend fun getItemWithIds(itemIds: IntArray): List<Item>
+    suspend fun getItemWithIds(itemIds: LongArray): List<Item>
 
-    @Query("SELECT id FROM item WHERE id IN(:itemIds)")
-    suspend fun getIdWithIds(itemIds: IntArray): List<Long>
+    @Query("SELECT * FROM item where id = :id")
+    suspend fun getItem(id: Long): Item
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: Item)

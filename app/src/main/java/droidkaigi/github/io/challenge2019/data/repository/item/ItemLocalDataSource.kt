@@ -6,10 +6,10 @@ import droidkaigi.github.io.challenge2019.data.entity.ItemEntity
 class ItemLocalDataSource(
     val dao: ItemDao
 ) : ItemDataSource {
-    override suspend fun getAllIds(): List<Long> = dao.getAllIds()
 
-    override suspend fun getItemWithIds(itemIds: IntArray): List<ItemEntity> =
-        dao.getItemWithIds(itemIds).map { ItemEntity.fromDb(it) }
+    override suspend fun getItemWithIds(itemIds: List<Long>): List<ItemEntity> =
+        dao.getItemWithIds(itemIds.toTypedArray().toLongArray()).map { ItemEntity.fromDb(it) }
 
-    override suspend fun getIdWithIds(itemIds: IntArray): List<Long> = dao.getIdWithIds(itemIds)
+    override suspend fun getItem(itemId: Long): ItemEntity = ItemEntity.fromDb(dao.getItem(itemId))
+
 }
