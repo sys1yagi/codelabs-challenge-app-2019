@@ -15,7 +15,10 @@ class MyApplication : Application() {
 
         startKoin {
             modules(
-                singletonModule("https://hacker-news.firebaseio.com/v0/"),
+                singletonModule(
+                    this@MyApplication,
+                    "https://hacker-news.firebaseio.com/v0/"
+                ),
                 mainModule
             )
         }

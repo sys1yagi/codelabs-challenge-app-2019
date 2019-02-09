@@ -51,6 +51,9 @@ dependencies {
     // jetpack
     implementation 'androidx.core:core-ktx:1.1.0-alpha04'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0-alpha02'
+    implementation "androidx.room:room-runtime:2.1.0-alpha04"
+    implementation "androidx.room:room-coroutines:2.1.0-alpha04"
+    kapt "androidx.room:room-compiler:2.1.0-alpha04"
 
     // api
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
@@ -61,6 +64,7 @@ dependencies {
     // debug
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.1'

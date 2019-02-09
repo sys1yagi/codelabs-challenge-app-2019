@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import droidkaigi.github.io.challenge2019.data.api.HackerNewsApi
 import droidkaigi.github.io.challenge2019.data.api.response.Item
+import droidkaigi.github.io.challenge2019.data.repository.itemid.ItemIdRepository
 import droidkaigi.github.io.challenge2019.util.coroutine.AppCoroutineDispatchers
 import droidkaigi.github.io.challenge2019.util.extension.await
 import droidkaigi.github.io.challenge2019.util.extension.swapFirst
@@ -14,7 +15,8 @@ import kotlinx.coroutines.*
 
 class MainViewModel(
     private val dispatchers: AppCoroutineDispatchers,
-    private val api: HackerNewsApi
+    private val api: HackerNewsApi,
+    private val itemIdRepository: ItemIdRepository
 ) : ViewModel() {
 
     companion object {
@@ -48,9 +50,8 @@ class MainViewModel(
                 val stories = if (savedInstanceState != null) {
                     savedInstanceState.getParcelableArrayList<Story>(STATE_STORIES)?.toList()
                 } else {
-                    val storyIds = api
-                        .getTopStories()
-                        .await()
+                    val storyIds = itemIdRepository
+                        .getTopStoriesIds()
                         .take(20)
 
                     // todo get already read ids
